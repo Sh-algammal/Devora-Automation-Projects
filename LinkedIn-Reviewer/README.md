@@ -102,4 +102,4 @@ Profile submissions contain personal and professional information.
 
 ## About
 
-Developed by **Devora Community**.
+Developed by **@sh_algammal**.
