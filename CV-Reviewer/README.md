@@ -103,4 +103,4 @@ CVs contain personal data (names, contact details, work history), so handle them
 
 ## About
 
-Developed by **Devora Community**.
+Developed by **@sh_algammal**.
