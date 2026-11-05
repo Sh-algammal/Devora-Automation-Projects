@@ -1,0 +1,378 @@
+{
+  "name": "linkedin reviewer bot",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Headline: {{ $json[\"Headline\"] }}\n\nAbout: {{ $json[\"About\"] }}\n\nSkills: {{ $json[\"Skills\"] }}\n\nProjects: {{ $json[\"Projects\"] }}\n\nCertifications: {{ $json[\"Certifications\"] }}\n\nExperience: {{ $json[\"Experience\"] }}\n\nGitHub: {{ $json[\"GitHub URL\"] }}\n\nLinkedIn URL: {{ $json[\"LinkedIn URL\"] }}",
+        "options": {
+          "systemMessage": "You are a senior LinkedIn recruiter and career coach.\n\nYour task is to audit LinkedIn profiles for students and junior professionals.\n\nSTRICT RULES:\n\n1. Only evaluate information explicitly provided by the user.\n2. Never invent skills, projects, certifications, technologies, achievements, experience, or education details.\n3. If information is missing, clearly state \"Not Provided\".\n4. Never give generic advice.\n5. Every recommendation must be personalized.\n6. Be direct and objective.\n\nSCORING:\n\n* ATS Score (0-100)\n* Recruiter Attraction Score (0-100)\n* Technical Credibility Score (0-100)\n* Profile Completeness Score (0-100)\n\nCalculate Final Score as the average.\n\nOUTPUT FORMAT:\n\n# LinkedIn Audit Report\n\n## Overall Score\n\nXX/100\n\n## ATS Score\n\nXX/100\n\n## Recruiter Attraction Score\n\nXX/100\n\n## Technical Credibility Score\n\nXX/100\n\n## Profile Completeness Score\n\nXX/100\n\n## Why These Scores?\n\nExplain each score briefly.\n\n## Strengths\n\n* ...\n\n## Weaknesses\n\n* ...\n\n## Missing Information\n\n* ...\n\n## Suggested Headline\n\nProvide a complete ready-to-copy headline.\n\n\n## Suggested About Section\n\nProvide a complete ready-to-copy About section.\n\n## Recommended Projects\n\nSuggest 3 realistic projects based only on the user's current skills and career direction.\n\n## 30-Day Improvement Plan\n\nWeek 1:\n...\n\nWeek 2:\n...\n\nWeek 3:\n...\n\nWeek 4:\n...\n\nBefore performing any evaluation:\n\nCheck whether the following fields exist:\n\n* Headline\n* About\n* Skills\n* Projects\n* Experience\n\nIf more than two fields are missing:\n\nDo NOT evaluate the profile.\n\nInstead reply with:\n\n\"Not enough information to perform a LinkedIn audit. Please complete the template below.\"\n\nThen provide:\n\nHeadline:\nAbout:\nSkills:\nProjects:\nCertifications:\nExperience:\nGitHub:\nLinkedIn URL:\n\nAlways format your response using Markdown.\n\nUse clear section headers.\n\nUse bullet points.\n\nUse separators between sections.\n\nMake the output look like a professional audit report.\n\nCRITICAL ENFORCEMENT RULES\n\nGitHub is OPTIONAL.\n\nNever deduct points because GitHub is missing.\n\nNever recommend creating a GitHub profile unless the user explicitly states they have one or want one.\n\nNever recommend technologies, frameworks, libraries, databases, tools, programming languages, platforms, or certifications that were not explicitly provided by the user.\n\nIf career direction is unclear:\n\nDo not assume:\n\n* Software Developer\n* Web Developer\n* Backend Developer\n* Frontend Developer\n* Data Analyst\n* AI Engineer\n* Cybersecurity Engineer\n\nState:\n\"Career direction was not provided.\"\n\nRecommended projects must only use explicitly listed skills.\n\nIf insufficient skills exist to recommend projects:\n\nState:\n\"Not enough information to generate realistic project recommendations.\"\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        720,
+        -32
+      ],
+      "id": "8a6773a4-376e-4c78-a3a7-a5583e66df0b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        192
+      ],
+      "id": "46bd1851-f0cf-4736-9fa8-8c065fbb672d",
+      "name": "Google Gemini Chat Model"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1Nq-smSVNvBO0KVaF9gkC51g3P_GCv2yuWJAEvmCenrE",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Reviews",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Nq-smSVNvBO0KVaF9gkC51g3P_GCv2yuWJAEvmCenrE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 67413798,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Nq-smSVNvBO0KVaF9gkC51g3P_GCv2yuWJAEvmCenrE/edit#gid=67413798"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        48,
+        224
+      ],
+      "id": "b2c59360-b472-4faa-9b2f-767029d86a55",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "NBkscRSJQrnM9NMH",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "34218587-1c20-42e8-be7a-f7e33d2598fb",
+              "leftValue": "={{ $json.missingFields }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        496,
+        224
+      ],
+      "id": "ec89cfa9-8c00-4ca5-8de9-efde12733fba",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "let missing = 0;\n\nif (!$json[\"Headline\"]) missing++;\nif (!$json[\"About\"]) missing++;\nif (!$json[\"Skills\"]) missing++;\nif (!$json[\"Projects\"]) missing++;\nif (!$json[\"Experience\"]) missing++;\n\nreturn [{\n    ...$json,\n    missingFields: missing\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        224
+      ],
+      "id": "e44844ac-67eb-49d4-8061-7e9054674fc5",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "34dd7187-55c7-4a83-a2c2-bf800d1d22e9",
+              "name": "message",
+              "value": "Not enough information to perform a LinkedIn audit.\n\nPlease complete the template below.\n\nHeadline: \nAbout: \nSkills: \nProjects: \nCertifications: \nExperience: \nGitHub: \nLinkedIn URL:",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        784,
+        416
+      ],
+      "id": "286beb65-73a2-4f9d-ba7d-966ed20f51a6",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1072,
+        176
+      ],
+      "id": "8c03a8b0-c88f-4903-9220-51022afaa091",
+      "name": "Append row in sheet"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1426207657408073849",
+          "mode": "list",
+          "cachedResultName": "Devora",
+          "cachedResultUrl": "https://discord.com/channels/1426207657408073849"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1516947333139402993",
+          "mode": "list",
+          "cachedResultName": "linkedin-review",
+          "cachedResultUrl": "https://discord.com/channels/1426207657408073849/1516947333139402993"
+        },
+        "content": "=Hi  <@{{ $('Google Sheets Trigger').item.json['Discord User ID'] }}> this is your LinkedIn Review",
+        "options": {},
+        "files": {
+          "values": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1296,
+        -16
+      ],
+      "id": "c8a805a9-3e6e-4e41-b937-60cd6591972c",
+      "name": "Send a message",
+      "webhookId": "829cd8b0-21ce-4a83-843d-c79de0de7c05"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "output",
+        "options": {
+          "fileName": "linkedin-review.txt"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1072,
+        -16
+      ],
+      "id": "b0ef48ac-e293-4cac-a02d-8df4ec716932",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1426207657408073849",
+          "mode": "list",
+          "cachedResultName": "Devora",
+          "cachedResultUrl": "https://discord.com/channels/1426207657408073849"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1516947333139402993",
+          "mode": "list",
+          "cachedResultName": "linkedin-review",
+          "cachedResultUrl": "https://discord.com/channels/1426207657408073849/1516947333139402993"
+        },
+        "content": "=Hi <@{{ $('Google Sheets Trigger').item.json['Discord User ID'] }}>\n\n{{ $('Edit Fields').item.json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        416
+      ],
+      "id": "fb69bb01-a8cf-404d-9389-9aea7581fd23",
+      "name": "Send a message1",
+      "webhookId": "acfea016-ee45-4f42-bb6b-4127efe1377f"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "af4d1095-750d-4e55-9b3d-b3be4c7e1fbf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "21559606b6a7088ae9a1a05b7cc5b89dd301e86be68840e531dfe7a595d6af19"
+  },
+  "nodeGroups": [],
+  "id": "QvqKefa2HHoAi45b",
+  "tags": [
+    {
+      "updatedAt": "2026-06-20T21:35:44.400Z",
+      "createdAt": "2026-06-20T21:35:44.400Z",
+      "id": "o7MgJPpgBUFbbPVk",
+      "name": "discord"
+    },
+    {
+      "updatedAt": "2026-06-20T21:34:50.256Z",
+      "createdAt": "2026-06-20T21:34:50.256Z",
+      "id": "w1Ei1G3I2PmbB9B6",
+      "name": "bots"
+    }
+  ]
+}

@@ -1,0 +1,552 @@
+{
+  "name": "CV Reviewer bot",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        1776
+      ],
+      "id": "d0581203-bb8e-485b-bb76-103d1fc6869f",
+      "name": "Google Sheets Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "34218587-1c20-42e8-be7a-f7e33d2598fb",
+              "leftValue": "={{$json.text}}",
+              "rightValue": 3,
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        656,
+        1776
+      ],
+      "id": "4ccd4141-f078-4c01-a2b2-6adf851ef4e2",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const url = $json[\"Upload CV\"];\n\nconst fileId = url.split(\"id=\")[1];\n\nreturn {\n  json: {\n    ...$json,\n    fileId\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        1776
+      ],
+      "id": "a422835b-b390-402b-a8c8-b9a63541be76",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "34dd7187-55c7-4a83-a2c2-bf800d1d22e9",
+              "name": "message",
+              "value": "=Hi @{{$('Google Sheets Trigger').item.json['Discord User ID']}}\n\nUnable to read your CV.\n\nPlease upload a valid PDF CV.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        944,
+        1968
+      ],
+      "id": "74e9d67c-2f46-4519-89b2-95da86e92b7c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Wd2LQzV8gH6id_tOl80eEVc9JLvqTZSKDg3P1F_hx7U",
+          "mode": "list",
+          "cachedResultName": "CV Reviews",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Wd2LQzV8gH6id_tOl80eEVc9JLvqTZSKDg3P1F_hx7U/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 703481264,
+          "mode": "list",
+          "cachedResultName": "CV Audit Reports",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Wd2LQzV8gH6id_tOl80eEVc9JLvqTZSKDg3P1F_hx7U/edit#gid=703481264"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now }}",
+            "Discord Username": "={{ $json.discord_username }}",
+            "Discord User ID": "={{ $json.discord_user_id }}",
+            "Overall Score": "={{ $json.overall_score }}",
+            "ATS Score": "={{ $json.ats_score }}",
+            "Recruiter Score": "={{ $json.recruiter_score }}",
+            "Technical Score": "={{ $json.technical_score }}",
+            "Completeness Score": "={{ $json.completeness_score }}",
+            "Report": "={{ $json.report }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Discord Username",
+              "displayName": "Discord Username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Discord User ID",
+              "displayName": "Discord User ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Overall Score",
+              "displayName": "Overall Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ATS Score",
+              "displayName": "ATS Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Recruiter Score",
+              "displayName": "Recruiter Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Technical Score",
+              "displayName": "Technical Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Completeness Score",
+              "displayName": "Completeness Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Report",
+              "displayName": "Report",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1456,
+        1728
+      ],
+      "id": "4e70d75e-d663-4a7f-816f-99f597f538e2",
+      "name": "Append row in sheet"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1426207657408073849",
+          "mode": "list",
+          "cachedResultName": "Devora",
+          "cachedResultUrl": "https://discord.com/channels/1426207657408073849"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1426767736876568656",
+          "mode": "list",
+          "cachedResultName": "📝-cv-review",
+          "cachedResultUrl": "https://discord.com/channels/1426207657408073849/1426767736876568656"
+        },
+        "content": "=Hi  <@{{ $('Google Sheets Trigger').item.json['Discord User ID'] }}> this is your CV Review",
+        "options": {},
+        "files": {
+          "values": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1456,
+        1536
+      ],
+      "id": "ac8929df-9621-4949-bc17-d214d3abe131",
+      "name": "Send a message",
+      "webhookId": "470ce835-2e77-4e16-857c-aaf72a507aeb"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "output",
+        "options": {
+          "fileName": "={{ $('Google Sheets Trigger').item.json['Discord Username'] }}-cv-review.txt"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1232,
+        1536
+      ],
+      "id": "b29c8b41-1c91-4073-aa8c-6ee5bf50d799",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1426207657408073849",
+          "mode": "list",
+          "cachedResultName": "Devora",
+          "cachedResultUrl": "https://discord.com/channels/1426207657408073849"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1426767736876568656",
+          "mode": "list",
+          "cachedResultName": "📝-cv-review",
+          "cachedResultUrl": "https://discord.com/channels/1426207657408073849/1426767736876568656"
+        },
+        "content": "={{ $('Edit Fields').item.json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        1968
+      ],
+      "id": "8e44855b-98ef-46d7-a2f2-80185109baa6",
+      "name": "Send a message1",
+      "webhookId": "cd2f0d82-08b8-449c-98e3-b58d0439a5a1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze the following CV:\n\n{{$json.text}}",
+        "options": {
+          "systemMessage": "You are Devora CV Reviewer v1.0.\n\nYour task is to evaluate student CVs and junior resumes.\n\nSTRICT RULES:\n\n1. Only evaluate information explicitly present in the CV.\n\n2. Never invent:\n\n   * Skills\n   * Technologies\n   * Frameworks\n   * Databases\n   * Tools\n   * Certifications\n   * Experience\n   * Achievements\n   * Metrics\n   * Performance improvements\n\n3. Never assume:\n\n   * GitHub exists unless shown.\n   * Portfolio exists unless shown.\n   * Databases used unless shown.\n   * APIs used unless shown.\n   * Frameworks used unless shown.\n\n4. If information is missing:\n   State clearly that it is missing.\n\n5. Do not compare students to senior professionals.\n\n6. Score students relative to other students.\n\n7. Do not recommend technologies not already mentioned in the CV.\n\n8. Recommended Projects must use only technologies already found in the CV.\n\n9. If project implementation details are missing, say:\n   \"Project details were not provided.\"\n\nOUTPUT FORMAT:\n\n# CV Audit Report\n\n## Overall Score\n\n## ATS Score\n\n## Recruiter Attraction Score\n\n## Technical Credibility Score\n\n## Resume Completeness Score\n\n## Why These Scores?\n\n## Strengths\n\n## Weaknesses\n\n## Missing Information\n\n## Suggested Professional Summary\n\n## Suggested Improvements\n\n## Recommended Projects\n\n## 30-Day Improvement Plan\n\nReturn the report in Markdown format.\n\nSCORING RULES:\n\n100 = Exceptional student profile with internships, strong projects, certifications, leadership, and measurable impact.\n\n90-99 = Outstanding student profile with multiple strong projects and certifications.\n\n80-89 = Strong student profile with relevant projects and certifications.\n\n70-79 = Good student profile with solid foundations but notable gaps.\n\n60-69 = Average student profile.\n\nBelow 60 = Weak profile with significant missing information.\n\nDo not give scores above 90 unless the CV contains exceptional evidence.\n\nDo not score above 94 unless the CV contains at least one of:\n\n- Internship experience\n- Freelance experience\n- Open source contributions\n- Research publications\n- Hackathon achievements\n- Security competitions (CTFs)\n- Leadership positions with measurable impact\n\nATS Score = 25%\nRecruiter Attraction = 25%\nTechnical Credibility = 30%\nResume Completeness = 20%\n\nOverall Score = weighted average\n\nIMPORTANT:\n\nAt the beginning of every response output:\n\nOVERALL_SCORE: <number>\nATS_SCORE: <number>\nRECRUITER_SCORE: <number>\nTECHNICAL_SCORE: <number>\nCOMPLETENESS_SCORE: <number>\n\nThen continue with the full report."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        880,
+        1520
+      ],
+      "id": "f9284483-cad9-4e70-a03a-9d3b5f5fd91a",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        1744
+      ],
+      "id": "d3660790-a042-4b09-b781-af8023cf21ef",
+      "name": "Google Gemini Chat Model1"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "",
+          "mode": "id",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        208,
+        1776
+      ],
+      "id": "9618cb1c-e288-447b-9b7e-947cfc51f94b",
+      "name": "Download file"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        432,
+        1776
+      ],
+      "id": "8b3cceaf-aba6-48b1-8d4b-c2011b40aa67",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "jsCode": "const report = $json.output;\n\nfunction extractScore(label) {\n  const regex = new RegExp(`${label}:\\\\s*(\\\\d+)`);\n  const match = report.match(regex);\n  return match ? Number(match[1]) : null;\n}\n\nreturn [\n  {\n    json: {\n      report,\n\n      overall_score: extractScore(\"OVERALL_SCORE\"),\n      ats_score: extractScore(\"ATS_SCORE\"),\n      recruiter_score: extractScore(\"RECRUITER_SCORE\"),\n      technical_score: extractScore(\"TECHNICAL_SCORE\"),\n      completeness_score: extractScore(\"COMPLETENESS_SCORE\"),\n\n      discord_username: $('Google Sheets Trigger').item.json['Discord Username'],\n      discord_user_id: $('Google Sheets Trigger').item.json['Discord User ID']\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        1728
+      ],
+      "id": "17805725-f24d-42a5-a555-fdd02cd4da65",
+      "name": "Code in JavaScript1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "d0ca1195-5ec3-436d-92b8-84a4e234476d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "21559606b6a7088ae9a1a05b7cc5b89dd301e86be68840e531dfe7a595d6af19"
+  },
+  "nodeGroups": [],
+  "id": "t5s70M0OPrbQICYe",
+  "tags": [
+    {
+      "updatedAt": "2026-06-20T21:35:44.400Z",
+      "createdAt": "2026-06-20T21:35:44.400Z",
+      "id": "o7MgJPpgBUFbbPVk",
+      "name": "discord"
+    },
+    {
+      "updatedAt": "2026-06-20T21:34:50.256Z",
+      "createdAt": "2026-06-20T21:34:50.256Z",
+      "id": "w1Ei1G3I2PmbB9B6",
+      "name": "bots"
+    }
+  ]
+}

@@ -1,0 +1,489 @@
+{
+  "name": "temp jop",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "content": "={{$json[\"message\"]}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        848,
+        64
+      ],
+      "id": "51fc85ef-1ecc-47eb-8bc5-c8aab9e8413a",
+      "name": "Send a message",
+      "webhookId": "e8691de1-5d6a-4f6b-bada-f858c1e22a72"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = items[0].json; // اضبط حسب الـ output لديك\nconst titles = data.job_title || [];\nconst links = data.job_link || [];\nconst companies = data.company || data.Company || [];\nconst locations = data.location || [];\nconst posted = data.posted_ago || [];\n\nlet messages = [];\nlet minLen = Math.min(titles.length, links.length, companies.length, locations.length);\n\n// تكوين كل بند كنص منفصل\nlet outputArr = [];\n\nfor (let i = 0; i < minLen; i++) {\n  let fullLink = links[i] ? (links[i].startsWith('http') ? links[i] : `https://wuzzuf.net${links[i]}`) : \"\";\n  outputArr.push(\n    `🔹 *${titles[i]}*\\n🏢 ${companies[i] || ''} | 📍 ${locations[i] || ''}\\n🕒 ${posted[i] ? posted[i] : ''}\\n🔗 ${fullLink}\\n`\n  );\n}\n\n// دمج البندات في رسائل لا تتعدى 2000 حرف\nlet currentMsg = '';\noutputArr.forEach(line => {\n  if ((currentMsg + line).length > 2000) {\n    messages.push({ json: { message: currentMsg } });\n    currentMsg = line;\n  } else {\n    currentMsg += (currentMsg ? '\\n' : '') + line;\n  }\n});\nif(currentMsg) messages.push({ json: { message: currentMsg } });\n\n// لو تريد فقط 3 رسائل بالضبط\nif(messages.length > 3){\n   messages = messages.slice(0,3);\n}\n\nreturn messages;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        160
+      ],
+      "id": "912bc753-50c7-4977-9fe0-562217f02bb7",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 3
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -48,
+        160
+      ],
+      "id": "f48b6d75-e41a-426c-b0b3-70a13220fdba",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://wuzzuf.net/a/Web-Developer-Internship-Jobs-in-Egypt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        176,
+        -128
+      ],
+      "id": "4d80aba2-30d1-422e-8de3-f7f9fb25cb32",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "job_title",
+              "cssSelector": "h2.css-193uk2c a.css-o171kl",
+              "returnArray": true
+            },
+            {
+              "key": "job_link",
+              "cssSelector": "h2.css-193uk2c a.css-o171kl",
+              "returnValue": "attribute",
+              "attribute": "href",
+              "returnArray": true
+            },
+            {
+              "key": "Company",
+              "cssSelector": "a.css-ipsyv7",
+              "returnArray": true
+            },
+            {
+              "key": "location",
+              "cssSelector": "span.css-16x61xq",
+              "returnArray": true
+            },
+            {
+              "key": "posted_ago",
+              "cssSelector": "div.css-eg55jf",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        -128
+      ],
+      "id": "434b4834-6694-4aa5-ab82-3501ab230e67",
+      "name": "HTML1"
+    },
+    {
+      "parameters": {
+        "url": "https://wuzzuf.net/a/Mobile-Developer---Intern-Jobs-in-Egypt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        176,
+        64
+      ],
+      "id": "63a5bcc0-c517-4b99-a671-4c386c6e8ea0",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "job_title",
+              "cssSelector": "h2.css-193uk2c a.css-o171kl",
+              "returnArray": true
+            },
+            {
+              "key": "job_link",
+              "cssSelector": "h2.css-193uk2c a.css-o171kl",
+              "returnValue": "attribute",
+              "attribute": "href",
+              "returnArray": true
+            },
+            {
+              "key": "Company",
+              "cssSelector": "a.css-ipsyv7",
+              "returnArray": true
+            },
+            {
+              "key": "location",
+              "cssSelector": "span.css-16x61xq",
+              "returnArray": true
+            },
+            {
+              "key": "posted_ago",
+              "cssSelector": "div.css-eg55jf",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        64
+      ],
+      "id": "4ab84a0e-3a18-4358-86b9-cb651a095092",
+      "name": "HTML2"
+    },
+    {
+      "parameters": {
+        "url": "https://wuzzuf.net/a/AI-Intern-Jobs-in-Cairo",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        176,
+        256
+      ],
+      "id": "f0c0f88e-98b4-4ad3-a462-8b2845beb984",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "job_title",
+              "cssSelector": "h2.css-193uk2c a.css-o171kl",
+              "returnArray": true
+            },
+            {
+              "key": "job_link",
+              "cssSelector": "h2.css-193uk2c a.css-o171kl",
+              "returnValue": "attribute",
+              "attribute": "href",
+              "returnArray": true
+            },
+            {
+              "key": "Company",
+              "cssSelector": "a.css-ipsyv7",
+              "returnArray": true
+            },
+            {
+              "key": "location",
+              "cssSelector": "span.css-16x61xq",
+              "returnArray": true
+            },
+            {
+              "key": "posted_ago",
+              "cssSelector": "div.css-eg55jf",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        256
+      ],
+      "id": "6d7cde87-3097-4002-903e-998d02a62ab6",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "url": "https://wuzzuf.net/a/AI-Powered-Web-Development-Jobs-in-Egypt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        176,
+        448
+      ],
+      "id": "bbcce122-bc8a-43d8-a9a2-df0afea58aa6",
+      "name": "HTTP Request3"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "job_title",
+              "cssSelector": "h2.css-193uk2c a.css-o171kl",
+              "returnArray": true
+            },
+            {
+              "key": "job_link",
+              "cssSelector": "h2.css-193uk2c a.css-o171kl",
+              "returnValue": "attribute",
+              "attribute": "href",
+              "returnArray": true
+            },
+            {
+              "key": "Company",
+              "cssSelector": "a.css-ipsyv7",
+              "returnArray": true
+            },
+            {
+              "key": "location",
+              "cssSelector": "span.css-16x61xq",
+              "returnArray": true
+            },
+            {
+              "key": "posted_ago",
+              "cssSelector": "div.css-eg55jf",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        448
+      ],
+      "id": "a8822811-cc2e-4a73-8542-4956056b118d",
+      "name": "HTML3"
+    },
+    {
+      "parameters": {
+        "subject": "jop offer ",
+        "emailFormat": "text",
+        "text": "={{ $json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        848,
+        272
+      ],
+      "id": "48393d84-f53c-43e2-8126-02900f66c01a",
+      "name": "Send an Email",
+      "webhookId": "fc968a36-6668-4985-b54d-162eddf3fa1d"
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2026-06-17T15:48:58.027-04:00",
+          "Readable date": "June 17th 2026, 3:48:58 pm",
+          "Readable time": "3:48:58 pm",
+          "Day of week": "Wednesday",
+          "Year": "2026",
+          "Month": "June",
+          "Day of month": "17",
+          "Hour": "15",
+          "Minute": "48",
+          "Second": "58",
+          "Timezone": "America/New_York (UTC-04:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "HTML1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "HTML2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "HTML3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "96e705b3-34c7-4bd2-850b-bce5c91f1119",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "21559606b6a7088ae9a1a05b7cc5b89dd301e86be68840e531dfe7a595d6af19"
+  },
+  "nodeGroups": [],
+  "id": "DUnC6fqB9f23wbyc",
+  "tags": []
+}
