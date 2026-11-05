@@ -100,4 +100,4 @@ Schedule (every 3 hours) → HTTP Requests → HTML Extraction (CSS) → JavaScr
 
 ## About
 
-Developed by **Devora Community**.
+Developed by **@sh_algammal**.
