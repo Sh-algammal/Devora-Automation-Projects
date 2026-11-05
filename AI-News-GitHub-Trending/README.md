@@ -101,4 +101,4 @@ Schedule Trigger ─┬─► VentureBeat AI RSS ──────┐
 
 ## About
 
-Developed by **Devora Community**.
+Developed by **@sh_algammal**.
