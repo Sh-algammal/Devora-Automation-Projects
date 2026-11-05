@@ -83,7 +83,7 @@ Devora-Automation-Projects/
 
 1. **Clone** the repository:
    ```bash
-   git clone https://github.com/<your-org>/Devora-Automation-Projects.git
+   git clone https://github.com/Sh-algammal/Devora-Automation-Projects.git
    cd Devora-Automation-Projects
    ```
 2. **Pick a project** and read its `README.md` for requirements.
@@ -143,4 +143,4 @@ This repository represents our practical work in AI integration and workflow aut
 
 **Built with curiosity. Automated with purpose.**
 
-*Developed by Devora Community.*
+*Developed by @sh_algammal.*
